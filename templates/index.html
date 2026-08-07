@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ASCENT Mission Control</title>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700&display=swap"
+    rel="stylesheet"
+>
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+
+        <h1>ASCENT</h1>
+
+        <p>
+            From Anomaly to Action, Autonomously
+        </p>
+
+    </div>
+
+
+    <div class="mission-status">
+
+        <div class="status-card">
+
+            <span>
+                Mission Time
+            </span>
+
+            <h2 id="missionTimer">
+
+                T + {{ telemetry.mission.mission_time }} s
+
+            </h2>
+
+        </div>
+
+
+        <div class="status-card">
+
+            <span>
+                Status
+            </span>
+
+            <h2
+                id="statusText"
+                class="
+                {% if telemetry.ai.risk_level == 'LOW' %}
+                    nominal-status
+                {% elif telemetry.ai.risk_level == 'MEDIUM' %}
+                    warning-status
+                {% else %}
+                    danger-status
+                {% endif %}
+                "
+            >
+
+                <span class="live-dot"></span>
+
+                {{ telemetry.engine.status }}
+
+            </h2>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<main class="dashboard">
+
+
+<!-- ===================================== -->
+<!-- MISSION OVERVIEW -->
+<!-- ===================================== -->
+
+<section class="card overview">
+
+    <h2>
+        Mission Overview
+    </h2>
+
+
+    <div class="info-box">
+
+        <span>
+            Vehicle
+        </span>
+
+        <h3>
+            {{ telemetry.vehicle }}
+        </h3>
+
+    </div>
+
+
+    <div class="info-box">
+
+        <span>
+            Engine
+        </span>
+
+        <h3>
+            {{ telemetry.engine.type }}
+        </h3>
+
+    </div>
+
+
+    <div class="info-box">
+
+        <span>
+            Mission
+        </span>
+
+        <h3>
+            {{ telemetry.mission.name }}
+        </h3>
+
+    </div>
+
+
+    <div class="info-box">
+
+        <span>
+            Mission Phase
+        </span>
+
+        <h3>
+            {{ telemetry.mission.phase }}
+        </h3>
+
+    </div>
+
+
+    <div class="timeline">
+
+        <h3>
+            Mission Timeline
+        </h3>
+
+
+        <div class="timeline-step complete">
+
+            <span class="step-dot"></span>
+
+            Fuel Loaded
+
+        </div>
+
+
+        <div class="timeline-step complete">
+
+            <span class="step-dot"></span>
+
+            Turbopump Started
+
+        </div>
+
+
+        <div class="timeline-step active">
+
+            <span class="step-dot"></span>
+
+            Ignition Sequence
+
+        </div>
+
+
+        <div class="timeline-step">
+
+            <span class="step-dot"></span>
+
+            Full Duration Burn
+
+        </div>
+
+
+        <div class="timeline-step">
+
+            <span class="step-dot"></span>
+
+            Shutdown
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ===================================== -->
+<!-- ENGINE TELEMETRY -->
+<!-- ===================================== -->
+
+<section class="card telemetry">
+
+    <h2>
+        Engine Telemetry
+    </h2>
+
+
+    <div class="metric">
+
+        <span>
+            Thrust
+        </span>
+
+        <strong id="thrustValue">
+
+            {{ telemetry.engine.thrust_kN }} kN
+
+        </strong>
+
+    </div>
+
+
+    <div class="metric">
+
+        <span>
+            Chamber Pressure
+        </span>
+
+        <strong id="pressureValue">
+
+            {{ telemetry.engine.chamber_pressure_bar }} bar
+
+        </strong>
+
+    </div>
+
+
+    <div class="metric">
+
+        <span>
+            Temperature
+        </span>
+
+        <strong id="temperatureValue">
+
+            {{ telemetry.engine.temperature_K }} K
+
+        </strong>
+
+    </div>
+
+
+    <div class="metric">
+
+        <span>
+            RPM
+        </span>
+
+        <strong id="rpmValue">
+
+            {{ telemetry.engine.rpm }}
+
+        </strong>
+
+    </div>
+
+
+    <div class="metric">
+
+        <span>
+            Fuel Flow
+        </span>
+
+        <strong id="fuelFlowValue">
+
+            {{ telemetry.engine.fuel_flow_kg_s }} kg/s
+
+        </strong>
+
+    </div>
+
+
+    <div class="metric">
+
+        <span>
+            Engine Health
+        </span>
+
+        <strong
+            id="healthValue"
+            class="healthy"
+        >
+
+            {{ telemetry.engine.health }}%
+
+        </strong>
+
+    </div>
+
+
+
+    <!-- ENGINE VISUALIZATION -->
+
+    <div class="engine-display">
+
+        <div class="engine-title">
+
+            Engine Core Visualization
+
+        </div>
+
+
+        <div class="engine">
+
+            <div class="fuel-line left"></div>
+
+            <div class="fuel-line right"></div>
+
+            <div class="combustion-chamber"></div>
+
+            <div class="nozzle"></div>
+
+            <div class="flame"></div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- PRESSURE GRAPH -->
+
+    <div class="telemetry-chart">
+
+        <canvas id="pressureChart"></canvas>
+
+    </div>
+
+</section>
+
+
+
+<!-- ===================================== -->
+<!-- AERIS AI -->
+<!-- ===================================== -->
+
+<section class="card ai">
+
+    <h2>
+        AERIS AI
+    </h2>
+
+
+    <!-- ================================= -->
+    <!-- REASONING TRAIL STEPPER -->
+    <!-- Visualizes the observe->diagnose-> -->
+    <!-- risk->decide->act->verify loop     -->
+    <!-- that already runs every cycle in   -->
+    <!-- process_telemetry(). Animated and  -->
+    <!-- updated in script.js.              -->
+    <!-- ================================= -->
+
+    <div class="reasoning-trail" id="reasoningTrail">
+
+        <div class="trail-stage" data-stage="observe">
+            <span class="stage-dot"></span>
+            <span class="stage-label">OBSERVE</span>
+        </div>
+
+        <div class="trail-arrow">→</div>
+
+        <div class="trail-stage" data-stage="diagnose">
+            <span class="stage-dot"></span>
+            <span class="stage-label">DIAGNOSE</span>
+        </div>
+
+        <div class="trail-arrow">→</div>
+
+        <div class="trail-stage" data-stage="risk">
+            <span class="stage-dot"></span>
+            <span class="stage-label">RISK</span>
+        </div>
+
+        <div class="trail-arrow">→</div>
+
+        <div class="trail-stage" data-stage="decide">
+            <span class="stage-dot"></span>
+            <span class="stage-label">DECIDE</span>
+        </div>
+
+        <div class="trail-arrow">→</div>
+
+        <div class="trail-stage" data-stage="act">
+            <span class="stage-dot"></span>
+            <span class="stage-label">ACT</span>
+        </div>
+
+        <div class="trail-arrow">→</div>
+
+        <div class="trail-stage" data-stage="verify">
+            <span class="stage-dot"></span>
+            <span class="stage-label">VERIFY</span>
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- STABILIZING BANNER -->
+    <!-- Shown briefly right after a fault clears (risk drops -->
+    <!-- from MEDIUM/HIGH to LOW), to make the VERIFY step -->
+    <!-- visible instead of the dashboard silently snapping -->
+    <!-- back to nominal. Hidden by default; toggled by -->
+    <!-- script.js. -->
+    <!-- ================================= -->
+
+    <div class="stabilizing-banner" id="stabilizingBanner">
+        System stabilizing — returning to nominal
+    </div>
+
+
+
+    <!-- AI DIAGNOSIS -->
+
+    <div class="ai-message">
+
+        <div class="ai-dot"></div>
+
+        <p id="aiMessage">
+
+            {{ telemetry.ai.diagnosis }}
+
+        </p>
+
+    </div>
+
+
+
+    <!-- AI ANALYSIS -->
+
+    <div class="ai-analysis">
+
+
+        <div class="analysis-row">
+
+            <span>
+                Risk Level
+            </span>
+
+            <strong
+                id="riskLevel"
+                class="
+                {% if telemetry.ai.risk_level == 'LOW' %}
+                    safe
+                {% elif telemetry.ai.risk_level == 'MEDIUM' %}
+                    warning
+                {% else %}
+                    danger
+                {% endif %}
+                "
+            >
+
+                {{ telemetry.ai.risk_level }}
+
+            </strong>
+
+        </div>
+
+
+
+        <div class="analysis-row">
+
+            <span>
+                Confidence
+            </span>
+
+            <strong id="confidenceValue">
+
+                {{ telemetry.ai.confidence }}%
+
+            </strong>
+
+        </div>
+
+
+
+        <div class="analysis-row">
+
+            <span>
+                Recommendation
+            </span>
+
+            <strong id="recommendationValue">
+
+                {{ telemetry.ai.recommendation }}
+
+            </strong>
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- AUTONOMOUS DECISION -->
+        <!-- ================================= -->
+
+        <div class="analysis-row">
+
+            <span>
+                AI Decision
+            </span>
+
+            <strong id="aiDecision">
+
+                {{ telemetry.ai.decision }}
+
+            </strong>
+
+        </div>
+
+
+
+        <div class="analysis-row">
+
+            <span>
+                Autonomous Action
+            </span>
+
+            <strong id="aiAction">
+
+                {{ telemetry.ai.action }}
+
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- EVENT LOG -->
+    <!-- ================================= -->
+
+    <div class="system-health">
+
+        <h3>
+            Mission Event Log
+        </h3>
+
+
+        <div id="eventLog">
+
+            {% for event in telemetry.events|reverse %}
+
+                <div class="event-card {{ event.level|lower }}">
+
+                    <div class="event-header">
+
+                        <span class="event-level">
+
+                            {{ event.level }}
+
+                        </span>
+
+                        {% if event.mission_time is not none %}
+
+                            <span class="event-time">
+
+                                T+{{ event.mission_time }}s
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <p>
+
+                        {{ event.message }}
+
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- SUBSYSTEM HEALTH -->
+    <!-- ================================= -->
+
+    <div class="health-item">
+
+        <span>
+            Turbopump
+        </span>
+
+        <div class="health-bar">
+
+            <div class="health-fill turbo"></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="health-item">
+
+        <span>
+            Cooling
+        </span>
+
+        <div class="health-bar">
+
+            <div class="health-fill cooling"></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="health-item">
+
+        <span>
+            Injector
+        </span>
+
+        <div class="health-bar">
+
+            <div class="health-fill injector"></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ===================================== -->
+<!-- ML ANOMALY DETECTION                   -->
+<!-- Separate card, deliberately distinct   -->
+<!-- from AERIS AI above. Two independent   -->
+<!-- systems: AERIS is rule-based, this is  -->
+<!-- a trained Isolation Forest model.      -->
+<!-- ===================================== -->
+
+<section class="card ai">
+
+    <h2>
+        ML Anomaly Detection
+    </h2>
+
+
+    <div class="ai-message">
+
+        <div class="ai-dot"></div>
+
+        <p id="mlAnomalyMessage">
+
+            {% if telemetry.ml_anomaly.model_ready %}
+                {% if telemetry.ml_anomaly.is_anomaly %}
+                    Anomalous telemetry pattern detected.
+                {% else %}
+                    Telemetry pattern within normal range.
+                {% endif %}
+            {% else %}
+                Model not yet trained.
+            {% endif %}
+
+        </p>
+
+    </div>
+
+
+    <div class="ai-analysis">
+
+        <div class="analysis-row">
+
+            <span>
+                Anomaly Score
+            </span>
+
+            <strong
+                id="mlAnomalyScore"
+                class="
+                {% if telemetry.ml_anomaly.anomaly_score >= 60 %}
+                    danger
+                {% elif telemetry.ml_anomaly.anomaly_score >= 40 %}
+                    warning
+                {% else %}
+                    safe
+                {% endif %}
+                "
+            >
+
+                {{ telemetry.ml_anomaly.anomaly_score }} / 100
+
+            </strong>
+
+        </div>
+
+
+        <div class="analysis-row">
+
+            <span>
+                Status
+            </span>
+
+            <strong
+                id="mlAnomalyStatus"
+                class="
+                {% if telemetry.ml_anomaly.is_anomaly %}
+                    danger
+                {% else %}
+                    safe
+                {% endif %}
+                "
+            >
+
+                {% if telemetry.ml_anomaly.is_anomaly %}
+                    ANOMALOUS
+                {% else %}
+                    NORMAL
+                {% endif %}
+
+            </strong>
+
+        </div>
+
+
+        <div class="analysis-row">
+
+            <span>
+                Model
+            </span>
+
+            <strong id="mlModelType">
+                Isolation Forest
+            </strong>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ===================================== -->
+<!-- FAULT INJECTION CONTROL PANEL -->
+<!-- ===================================== -->
+
+<section class="card fault-panel">
+
+    <h2>
+        Fault Injection Control
+    </h2>
+
+    <p>
+        Trigger a simulated propulsion fault and watch
+        AERIS detect, diagnose, and respond in real time.
+    </p>
+
+    <div class="fault-buttons">
+
+        <button
+            class="fault-btn injector"
+            onclick="injectFault('injector')"
+        >
+            Injector Blockage
+        </button>
+
+        <button
+            class="fault-btn cooling"
+            onclick="injectFault('cooling')"
+        >
+            Cooling Failure
+        </button>
+
+        <button
+            class="fault-btn pump"
+            onclick="injectFault('pump')"
+        >
+            Turbopump Instability
+        </button>
+
+        <button
+            class="fault-btn wear"
+            onclick="injectFault('wear')"
+        >
+            Engine Wear
+        </button>
+
+        <button
+            class="fault-btn clear"
+            onclick="clearFault()"
+        >
+            Clear Fault
+        </button>
+
+    </div>
+
+    <div id="activeFaultLabel" class="active-fault-label">
+        Active Fault: <span id="activeFaultName">None</span>
+    </div>
+
+</section>
+
+
+</main>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script
+    src="{{ url_for('static', filename='script.js') }}"
+></script>
+
+
+</body>
+
+</html>

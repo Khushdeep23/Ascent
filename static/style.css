@@ -1,0 +1,1348 @@
+/* ==========================
+   GLOBAL STYLES
+========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    background:#0B1020;
+    color:white;
+    font-family:'Inter',sans-serif;
+
+}
+/*
+*{}  eska kaam hota hai default spacing ko hta dena 
+*/
+/* ==========================
+   HEADER
+========================== */
+
+header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:20px 60px;
+
+    border-bottom:1px solid rgba(255,255,255,0.08);
+
+}
+/* ==========================
+   LOGO
+========================== */
+
+.logo h1{
+
+    font-family:'Orbitron',sans-serif;
+
+    font-size:34px;
+
+    letter-spacing:3px;
+
+    color:#4CC9F0;
+
+}
+
+.logo p{
+
+    color:#9CA3AF;
+
+    margin-top:5px;
+
+}
+/* ==========================
+   MISSION STATUS
+========================== */
+
+.mission-status{
+
+    display:flex;
+
+    gap:20px;
+
+}
+
+.status-card{
+
+    background:#151B2D;
+
+    padding:15px 25px;
+
+    border-radius:12px;
+
+    min-width:150px;
+
+    text-align:center;
+
+}
+
+.status-card span{
+
+    color:#9CA3AF;
+
+    font-size:13px;
+
+}
+
+.status-card h2{
+
+    margin-top:8px;
+
+    font-size:20px;
+
+}
+/* ==========================
+   DASHBOARD
+========================== */
+
+.dashboard{
+
+    display:grid;
+
+    grid-template-columns:1fr 2fr 1fr;
+
+    gap:25px;
+
+    padding:40px 60px;
+
+}
+/* ==========================
+   CARDS
+========================== */
+
+.card{
+
+    background:linear-gradient(
+        180deg,
+        #171E33,
+        #13192A
+    );
+
+    border-radius:22px;
+
+    padding:28px;
+
+    min-height:420px;
+
+    border:1px solid rgba(255,255,255,0.07);
+
+    box-shadow:
+        0px 15px 40px rgba(0,0,0,.35);
+
+    transition:.35s ease;
+
+}
+.card:hover{
+
+    transform:translateY(-5px);
+
+    border-color:#4CC9F0;
+
+}
+.card h2{
+
+    color:#55D6FF;
+
+    font-size:28px;
+
+    font-weight:600;
+
+    margin-bottom:30px;
+
+}
+.card p{
+
+    color:#D0D8E5;
+
+    margin-bottom:18px;
+
+    line-height:1.8;
+
+}
+.info-box{
+
+    background:#101625;
+
+    padding:18px;
+
+    border-radius:14px;
+
+    margin-bottom:18px;
+
+}
+
+.info-box span{
+
+    color:#7E8DA8;
+
+    font-size:13px;
+
+}
+
+.info-box h3{
+
+    margin-top:8px;
+
+    font-size:20px;
+
+    color:white;
+
+}
+/* ==========================
+   TELEMETRY METRICS
+========================== */
+
+.metric{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    background:#0F1524;
+
+    padding:16px 18px;
+
+    border-radius:12px;
+
+    margin-bottom:14px;
+
+    transition:.3s;
+
+}
+
+.metric:hover{
+
+    background:#18213A;
+
+}
+
+.metric span{
+
+    color:#97A4BF;
+
+    font-size:15px;
+
+}
+
+.metric strong{
+
+    color:#FFFFFF;
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+.telemetry-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:18px;
+
+    margin-top:25px;
+
+}
+
+.telemetry-card{
+
+    background:#11182c;
+
+    border:1px solid rgba(255,255,255,0.05);
+
+    border-radius:14px;
+
+    padding:20px;
+
+    transition:0.3s;
+
+}
+
+.telemetry-card:hover{
+
+    transform:translateY(-3px);
+
+    border-color:#45c8ff;
+
+}
+
+.telemetry-card span{
+
+    color:#8ca2c8;
+
+    font-size:14px;
+
+}
+
+.telemetry-card h3{
+
+    margin-top:10px;
+
+    font-size:30px;
+
+    color:white;
+
+    font-weight:600;
+
+}
+
+.healthy{
+
+    color:#31e56b;
+
+}
+/* ==========================
+   LIVE TELEMETRY GRAPH
+========================== */
+
+.telemetry-chart{
+
+    margin-top:30px;
+
+    background:#101625;
+
+    border-radius:16px;
+
+    padding:20px;
+
+}
+
+.telemetry-chart canvas{
+
+    width:100% !important;
+
+    height:250px !important;
+
+}
+/*==============================
+LIVE STATUS
+==============================*/
+
+.nominal-status{
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:10px;
+
+color:#38d96f;
+
+text-shadow:0 0 12px rgba(56,217,111,.5);
+
+}
+
+.live-dot{
+
+width:12px;
+
+height:12px;
+
+border-radius:50%;
+
+background:#38d96f;
+
+animation:pulse 1s infinite;
+
+box-shadow:0 0 12px #38d96f;
+
+}
+
+@keyframes pulse{
+
+0%{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+50%{
+
+transform:scale(1.35);
+
+opacity:.45;
+
+}
+
+100%{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
+/* ==========================
+   AERIS AI
+========================== */
+
+.ai-message{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:12px;
+
+    background:#101625;
+
+    padding:18px;
+
+    border-radius:14px;
+
+    margin-bottom:22px;
+
+}
+
+.ai-dot{
+
+    width:12px;
+
+    height:12px;
+
+    background:#31E56B;
+
+    border-radius:50%;
+
+    margin-top:8px;
+
+    box-shadow:0 0 15px #31E56B;
+
+}
+
+.ai-message p{
+
+    margin:0;
+
+    color:#DCE5F7;
+
+    line-height:1.7;
+
+}
+
+.analysis-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:14px 0;
+
+    border-bottom:1px solid rgba(255,255,255,.06);
+
+}
+
+.analysis-row span{
+
+    color:#9FB0D0;
+
+}
+
+.analysis-row strong{
+
+    color:white;
+
+}
+
+.safe{
+
+    color:#31E56B;
+
+}
+/* ==========================
+   ENGINE VISUALIZATION
+========================== */
+
+.engine-display{
+
+    margin-top:35px;
+
+    background:#101625;
+
+    border-radius:18px;
+
+    padding:30px;
+
+}
+
+.engine-title{
+
+    color:#8EA8D8;
+
+    margin-bottom:30px;
+
+    text-align:center;
+
+    letter-spacing:1px;
+
+}
+
+.engine{
+
+    position:relative;
+
+    width:180px;
+
+    height:320px;
+
+    margin:auto;
+
+}
+
+/* Fuel Pipes */
+
+.fuel-line{
+
+    position:absolute;
+
+    width:16px;
+
+    height:120px;
+
+    background:#35cfff;
+
+    top:0;
+
+    border-radius:20px;
+
+    animation:pulsePipe 1.5s infinite;
+
+}
+
+.left{
+
+    left:45px;
+
+}
+
+.right{
+
+    right:45px;
+
+}
+
+/* Combustion Chamber */
+
+.combustion-chamber{
+
+    position:absolute;
+
+    top:100px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:90px;
+
+    height:110px;
+
+    background:#2a324f;
+
+    border:2px solid #46d2ff;
+
+    border-radius:22px;
+
+    box-shadow:0 0 25px #39cfff;
+
+    animation:chamberGlow 2s infinite;
+
+}
+
+/* Nozzle */
+
+.nozzle{
+
+    position:absolute;
+
+    top:205px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:50px;
+
+    height:70px;
+
+    background:#4a5875;
+
+    clip-path:polygon(15% 0%,85% 0%,100% 100%,0% 100%);
+
+}
+
+/* Flame */
+
+.flame{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:0;
+
+    transform:translateX(-50%);
+
+    width:50px;
+
+    height:70px;
+
+    background:linear-gradient(
+        orange,
+        yellow,
+        transparent
+    );
+
+    border-radius:50%;
+
+    filter:blur(8px);
+
+    animation:flameMove .25s infinite alternate;
+
+}
+
+/* Animations */
+
+@keyframes flameMove{
+
+    from{
+
+        height:60px;
+
+    }
+
+    to{
+
+        height:85px;
+
+    }
+
+}
+
+@keyframes chamberGlow{
+
+    0%{
+
+        box-shadow:0 0 10px #37d1ff;
+
+    }
+
+    50%{
+
+        box-shadow:0 0 35px #37d1ff;
+
+    }
+
+    100%{
+
+        box-shadow:0 0 10px #37d1ff;
+
+    }
+
+}
+
+@keyframes pulsePipe{
+
+    0%{
+
+        opacity:.7;
+
+    }
+
+    50%{
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        opacity:.7;
+
+    }
+
+}
+/* ==========================
+   SYSTEM HEALTH
+========================== */
+
+.system-health{
+
+    margin-top:35px;
+
+}
+
+.system-health h3{
+
+    color:#55D6FF;
+
+    margin-bottom:18px;
+
+    font-size:22px;
+
+}
+
+.health-item{
+
+    margin-bottom:18px;
+
+}
+
+.health-item span{
+
+    color:#AFC2E5;
+
+    font-size:14px;
+
+}
+
+.health-bar{
+
+    margin-top:8px;
+
+    width:100%;
+
+    height:10px;
+
+    background:#0F1524;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.health-fill{
+
+    height:100%;
+
+    border-radius:20px;
+
+    animation:loadingBar 2s ease;
+
+}
+
+.fuel{
+
+    width:95%;
+
+    background:#38D9A9;
+
+}
+
+.turbo{
+
+    width:91%;
+
+    background:#4CC9F0;
+
+}
+
+.cooling{
+
+    width:97%;
+
+    background:#31E56B;
+
+}
+
+.injector{
+
+    width:94%;
+
+    background:#FFD166;
+
+}
+
+@keyframes loadingBar{
+
+    from{
+
+        width:0;
+
+    }
+
+}
+/* ==========================
+   MISSION TIMELINE
+========================== */
+
+.timeline{
+
+    margin-top:30px;
+
+}
+
+.timeline h3{
+
+    color:#55D6FF;
+
+    margin-bottom:20px;
+
+    font-size:22px;
+
+}
+
+.timeline-step{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    color:#7F92B4;
+
+    margin-bottom:16px;
+
+    transition:.3s;
+
+}
+
+.step-dot{
+
+    width:12px;
+
+    height:12px;
+
+    border-radius:50%;
+
+    background:#44506D;
+
+}
+
+.complete{
+
+    color:#31E56B;
+
+}
+
+.complete .step-dot{
+
+    background:#31E56B;
+
+    box-shadow:0 0 12px #31E56B;
+
+}
+
+.active{
+
+    color:#4CC9F0;
+
+    font-weight:600;
+
+}
+
+.active .step-dot{
+
+    background:#4CC9F0;
+
+    animation:pulseStep 1s infinite;
+
+}
+
+@keyframes pulseStep{
+
+    0%{
+
+        transform:scale(1);
+
+        box-shadow:0 0 0px #4CC9F0;
+
+    }
+
+    50%{
+
+        transform:scale(1.4);
+
+        box-shadow:0 0 15px #4CC9F0;
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+        box-shadow:0 0 0px #4CC9F0;
+
+    }
+
+}
+.warning-status{
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:10px;
+
+color:#FFD166;
+
+}
+
+.danger-status{
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:10px;
+
+color:#FF4D4D;
+
+}
+
+.warning{
+
+color:#FFD166;
+
+}
+
+.danger{
+
+color:#FF4D4D;
+
+}
+/*==============================
+MISSION EVENT LOG
+==============================*/
+
+#eventLog{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+    margin-top:20px;
+
+    max-height:300px;
+
+    overflow-y:auto;
+
+}
+
+.event-card{
+
+    background:#101625;
+
+    border-left:4px solid #4CC9F0;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    animation:fadeIn .3s ease;
+
+}
+
+.event-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:6px;
+
+}
+
+.event-level{
+
+    font-size:12px;
+
+    font-weight:bold;
+
+}
+
+.event-time{
+
+    font-size:11px;
+
+    color:#7F92B4;
+
+    font-family:'Orbitron',sans-serif;
+
+}
+
+.event-card.low{
+
+    border-left-color:#31E56B;
+
+}
+
+.event-card.medium{
+
+    border-left-color:#FFD166;
+
+}
+
+.event-card.high{
+
+    border-left-color:#FF4D4D;
+
+}
+
+.event-card p{
+
+    margin:0;
+
+    color:white;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+}
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(10px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+/* ==========================
+   FAULT INJECTION PANEL
+========================== */
+
+.fault-panel{
+
+    grid-column: 1 / -1;
+
+}
+
+.fault-buttons{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:14px;
+
+    margin-top:10px;
+
+}
+
+.fault-btn{
+
+    flex:1;
+
+    min-width:160px;
+
+    padding:16px 20px;
+
+    border:1px solid rgba(255,255,255,0.1);
+
+    border-radius:12px;
+
+    background:#151B2D;
+
+    color:white;
+
+    font-family:'Inter',sans-serif;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s ease;
+
+}
+
+.fault-btn:hover{
+
+    transform:translateY(-3px);
+
+    border-color:#4CC9F0;
+
+    box-shadow:0 8px 20px rgba(76,201,240,.25);
+
+}
+
+.fault-btn.injector:hover{
+    border-color:#FFD166;
+    box-shadow:0 8px 20px rgba(255,209,102,.25);
+}
+
+.fault-btn.cooling:hover{
+    border-color:#FF4D4D;
+    box-shadow:0 8px 20px rgba(255,77,77,.25);
+}
+
+.fault-btn.pump:hover{
+    border-color:#9B5DE5;
+    box-shadow:0 8px 20px rgba(155,93,229,.25);
+}
+
+.fault-btn.wear:hover{
+    border-color:#F15BB5;
+}
+
+.fault-btn.clear{
+
+    background:#1A2E22;
+
+    border-color:#31E56B;
+
+}
+
+.fault-btn.clear:hover{
+
+    box-shadow:0 8px 20px rgba(49,229,107,.25);
+
+}
+
+.active-fault-label{
+
+    margin-top:20px;
+
+    padding:14px 18px;
+
+    background:#101625;
+
+    border-radius:12px;
+
+    color:#9FB0D0;
+
+    font-size:14px;
+
+}
+
+.active-fault-label span{
+
+    color:white;
+
+    font-weight:600;
+
+}
+/* ==========================
+   REASONING TRAIL STEPPER
+   (Phase 4 — added this session)
+   Matches existing timeline-step /
+   status-card color language:
+   #4CC9F0 active, #31E56B complete,
+   #101625 box bg, #9FB0D0 muted label.
+========================== */
+
+.reasoning-trail{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:6px;
+
+    flex-wrap:wrap;
+
+    background:#101625;
+
+    padding:16px 14px;
+
+    border-radius:14px;
+
+    margin-bottom:24px;
+
+}
+
+.trail-stage{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:6px;
+
+    color:#7F92B4;
+
+    opacity:.5;
+
+    transition:.3s ease;
+
+}
+
+.trail-stage .stage-dot{
+
+    width:12px;
+
+    height:12px;
+
+    border-radius:50%;
+
+    background:#44506D;
+
+    transition:.3s ease;
+
+}
+
+.trail-stage .stage-label{
+
+    font-size:11px;
+
+    letter-spacing:.5px;
+
+    font-weight:600;
+
+}
+
+.trail-stage.stage-active{
+
+    color:#4CC9F0;
+
+    opacity:1;
+
+}
+
+.trail-stage.stage-active .stage-dot{
+
+    background:#4CC9F0;
+
+    animation:pulseStep 1s infinite;
+
+}
+
+.trail-stage.stage-complete{
+
+    color:#31E56B;
+
+    opacity:.9;
+
+}
+
+.trail-stage.stage-complete .stage-dot{
+
+    background:#31E56B;
+
+    box-shadow:0 0 12px #31E56B;
+
+}
+
+.trail-arrow{
+
+    color:#44506D;
+
+    font-size:14px;
+
+}
+/* ==========================
+   STABILIZING BANNER
+   (Phase 4, #3 — added this session)
+   Hidden by default, faded in/out via
+   the "visible" class in script.js when
+   risk_level transitions MEDIUM/HIGH -> LOW.
+========================== */
+
+.stabilizing-banner{
+
+    max-height:0;
+
+    opacity:0;
+
+    overflow:hidden;
+
+    background:rgba(49,229,107,.1);
+
+    border:1px solid rgba(49,229,107,.35);
+
+    color:#31E56B;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    text-align:center;
+
+    border-radius:10px;
+
+    letter-spacing:.3px;
+
+    transition:opacity .4s ease, max-height .4s ease, margin .4s ease, padding .4s ease;
+
+}
+
+.stabilizing-banner.visible{
+
+    max-height:60px;
+
+    opacity:1;
+
+    padding:12px;
+
+    margin-bottom:22px;
+
+}
+/* ==========================
+   TELEMETRY VALUE ALERT PULSE
+   (added for fault-active highlight)
+   Reuses existing .warning / .danger
+   color classes; this only adds motion.
+========================== */
+
+.pulse-alert{
+
+    animation:valuePulse 1s infinite;
+
+}
+
+@keyframes valuePulse{
+
+    0%{
+
+        opacity:1;
+
+    }
+
+    50%{
+
+        opacity:.5;
+
+    }
+
+    100%{
+
+        opacity:1;
+
+    }
+
+}

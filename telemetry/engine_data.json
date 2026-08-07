@@ -1,0 +1,48 @@
+{
+    "vehicle": "ASCENT-X",
+
+    "mission": {
+        "name": "Engine Qualification Test",
+        "phase": "Ignition",
+        "mission_time": 42
+    },
+
+    "engine": {
+        "status": "Nominal",
+
+        "type": "LOX-RP1 Test Engine",
+
+        "thrust_kN": 742,
+
+        "chamber_pressure_bar": 98.4,
+
+        "temperature_K": 3500,
+
+        "rpm": 28500,
+
+        "fuel_flow_kg_s": 245,
+
+        "oxidizer_flow_kg_s": 610,
+
+        "mixture_ratio": 2.49,
+
+        "vibration_mm_s": 2.8,
+
+        "health": 97,
+        
+        "throttle_percent": 100
+
+    },
+
+    
+
+    "limits": {
+        "max_chamber_pressure_bar": 105.0,
+
+        "max_temperature_K": 3600,
+
+        "max_vibration_mm_s": 5.0,
+
+        "minimum_engine_health": 80
+    }
+}
