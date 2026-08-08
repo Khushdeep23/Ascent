@@ -1018,6 +1018,52 @@ MISSION EVENT LOG
 
 }
 
+/* Diagnostic checklist rendered inside each event card
+   (Core bounty task). Previously these ✓ items had no
+   layout rules and rendered as inline text, running
+   together in one wall of text. Stacking them vertically
+   with their own subtle background pill matches the
+   existing .metric / .telemetry-card visual language
+   elsewhere on the dashboard. */
+
+.event-checklist{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
+    margin-top:10px;
+
+    padding-top:10px;
+
+    border-top:1px solid rgba(255,255,255,0.06);
+
+}
+
+.checklist-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    background:#0F1524;
+
+    padding:8px 12px;
+
+    border-radius:8px;
+
+    font-size:13px;
+
+    color:#AFC2E5;
+
+    font-family:'Inter',sans-serif;
+
+}
+
 @keyframes fadeIn{
 
     from{
