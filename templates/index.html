@@ -369,11 +369,6 @@
 
     <!-- ================================= -->
     <!-- REASONING TRAIL STEPPER -->
-    <!-- Visualizes the observe->diagnose-> -->
-    <!-- risk->decide->act->verify loop     -->
-    <!-- that already runs every cycle in   -->
-    <!-- process_telemetry(). Animated and  -->
-    <!-- updated in script.js.              -->
     <!-- ================================= -->
 
     <div class="reasoning-trail" id="reasoningTrail">
@@ -424,11 +419,6 @@
 
     <!-- ================================= -->
     <!-- STABILIZING BANNER -->
-    <!-- Shown briefly right after a fault clears (risk drops -->
-    <!-- from MEDIUM/HIGH to LOW), to make the VERIFY step -->
-    <!-- visible instead of the dashboard silently snapping -->
-    <!-- back to nominal. Hidden by default; toggled by -->
-    <!-- script.js. -->
     <!-- ================================= -->
 
     <div class="stabilizing-banner" id="stabilizingBanner">
@@ -556,6 +546,11 @@
 
     <!-- ================================= -->
     <!-- EVENT LOG -->
+    <!-- Each card now also shows a source  -->
+    <!-- checklist: the telemetry inputs    -->
+    <!-- that were read before this exact   -->
+    <!-- diagnosis was made, with their     -->
+    <!-- live values (Core bounty task).    -->
     <!-- ================================= -->
 
     <div class="system-health">
@@ -596,6 +591,24 @@
                         {{ event.message }}
 
                     </p>
+
+                    {% if event.checklist %}
+
+                        <div class="event-checklist">
+
+                            {% for item in event.checklist %}
+
+                                <span class="checklist-item">
+
+                                    ✓ {{ item.field }}: {{ item.value|round(1) }}{% if item.unit %} {{ item.unit }}{% endif %}
+
+                                </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
 
                 </div>
 
@@ -660,11 +673,7 @@
 
 
 <!-- ===================================== -->
-<!-- ML ANOMALY DETECTION                   -->
-<!-- Separate card, deliberately distinct   -->
-<!-- from AERIS AI above. Two independent   -->
-<!-- systems: AERIS is rule-based, this is  -->
-<!-- a trained Isolation Forest model.      -->
+<!-- ML ANOMALY DETECTION -->
 <!-- ===================================== -->
 
 <section class="card ai">
