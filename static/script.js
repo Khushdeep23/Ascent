@@ -710,7 +710,39 @@ async function updateDashboard() {
 // task) — the telemetry inputs read before that diagnosis, with
 // their live values, each marked checked.
 
+// Advanced bounty task: risk-level filter tabs. "All" or one of
+// LOW / MEDIUM / HIGH. Purely client-side — filters the same event
+// data already being fetched every second, no new backend calls.
+
+let currentEventFilter = "ALL";
+
+
+function setEventFilter(level) {
+
+    currentEventFilter = level;
+
+    document
+        .querySelectorAll(".filter-tab")
+        .forEach(tab => {
+
+            tab.classList.toggle(
+                "active",
+                tab.dataset.filter === level
+            );
+
+        });
+
+    updateEventLog(lastEventsSeen);
+
+}
+
+
+let lastEventsSeen = [];
+
+
 function updateEventLog(events) {
+
+    lastEventsSeen = events;
 
     const eventLog =
         document.getElementById(
@@ -725,11 +757,28 @@ function updateEventLog(events) {
     }
 
 
+    const filteredEvents =
+        currentEventFilter === "ALL"
+            ? events
+            : events.filter(e => e.level === currentEventFilter);
+
+
+    const countEl =
+        document.getElementById("filterCount");
+
+    if (countEl) {
+
+        countEl.textContent =
+            filteredEvents.length + " shown";
+
+    }
+
+
     eventLog.innerHTML =
         "";
 
 
-    events
+    filteredEvents
         .slice()
         .reverse()
         .forEach(
