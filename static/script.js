@@ -64,11 +64,6 @@ const mlAnomalyStatusElement =
 // =====================================
 // REASONING TRAIL STEPPER
 // =====================================
-// Animates OBSERVE -> DIAGNOSE -> RISK -> DECIDE -> ACT -> VERIFY
-// on every telemetry poll, then rests on whichever stage best
-// represents the current situation: VERIFY when risk is LOW
-// (loop is idle / confirming nominal), ACT when risk is
-// MEDIUM/HIGH (AI is actively intervening).
 
 const STAGES = ["observe", "diagnose", "risk", "decide", "act", "verify"];
 
@@ -151,12 +146,6 @@ function animateReasoningTrail(restingStage) {
 // =====================================
 // STABILIZING BANNER
 // =====================================
-// Fires once, right on the poll where risk_level transitions
-// from MEDIUM/HIGH down to LOW — i.e. the exact moment a fault
-// has just cleared. Tracks the previously-seen risk level so it
-// can detect that transition; only shows the banner on that one
-// poll, since the next poll's "previous" value is already LOW
-// and won't re-trigger it.
 
 let previousRiskLevel = null;
 
@@ -420,12 +409,6 @@ async function updateDashboard() {
         // =================================
         // VALUE ALERT HIGHLIGHT
         // =================================
-        // Purely visual — highlights the telemetry numbers
-        // themselves when the AI's risk_level is elevated, so a
-        // fault is visible on the raw values, not just in the AI
-        // panel. Reuses existing .warning/.danger color classes
-        // and adds a pulse via .pulse-alert. Cleared automatically
-        // once risk_level returns to LOW.
 
         const valueAlertClass =
             ai.risk_level === "HIGH"
@@ -580,8 +563,6 @@ async function updateDashboard() {
         // =================================
         // REASONING TRAIL
         // =================================
-        // Rests on VERIFY when nominal (LOW risk), ACT when
-        // the AI is actively responding to a fault (MEDIUM/HIGH).
 
         const restingStage =
             ai.risk_level === "LOW" ? "verify" : "act";
@@ -592,10 +573,6 @@ async function updateDashboard() {
         // =================================
         // STABILIZING BANNER
         // =================================
-        // Detects the MEDIUM/HIGH -> LOW transition (fault just
-        // cleared) and shows a brief "stabilizing" message so the
-        // VERIFY step has something visible to say, instead of
-        // the dashboard silently snapping back to nominal.
 
         maybeShowStabilizingBanner(ai.risk_level);
 
@@ -603,10 +580,6 @@ async function updateDashboard() {
         // =================================
         // ML ANOMALY DETECTION
         // =================================
-        // Separate system from AERIS above. Guards against
-        // mlAnomaly being missing/undefined so a stale page
-        // load (before app.py was updated) doesn't throw and
-        // break the rest of the dashboard update.
 
         if (mlAnomaly) {
 
@@ -733,6 +706,9 @@ async function updateDashboard() {
 // =====================================
 // EVENT LOG
 // =====================================
+// Each card now also renders its source checklist (Core bounty
+// task) — the telemetry inputs read before that diagnosis, with
+// their live values, each marked checked.
 
 function updateEventLog(events) {
 
@@ -845,6 +821,55 @@ function updateEventLog(events) {
                 );
 
 
+                if (
+                    event.checklist
+                    &&
+                    event.checklist.length > 0
+                ) {
+
+                    const checklistDiv =
+                        document.createElement(
+                            "div"
+                        );
+
+                    checklistDiv.className =
+                        "event-checklist";
+
+                    event.checklist.forEach(
+                        item => {
+
+                            const itemSpan =
+                                document.createElement(
+                                    "span"
+                                );
+
+                            itemSpan.className =
+                                "checklist-item";
+
+                            const unitText =
+                                item.unit
+                                    ? " " + item.unit
+                                    : "";
+
+                            itemSpan.textContent =
+                                "✓ " + item.field + ": "
+                                + Number(item.value).toFixed(1)
+                                + unitText;
+
+                            checklistDiv.appendChild(
+                                itemSpan
+                            );
+
+                        }
+                    );
+
+                    card.appendChild(
+                        checklistDiv
+                    );
+
+                }
+
+
                 eventLog.appendChild(
                     card
                 );
@@ -892,9 +917,6 @@ async function injectFault(faultName) {
         activeFaultNameElement.textContent =
             faultName.toUpperCase();
 
-        // Immediately pull fresh telemetry so the
-        // dashboard reacts without waiting up to 1s
-        // for the next poll cycle.
         updateDashboard();
 
     }
