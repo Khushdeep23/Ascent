@@ -1,6 +1,8 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, Response
 import json
 import time
+import csv
+import io
 
 from ai.analyzer import analyze_engine
 from ai.logger import log_event, get_events
@@ -39,11 +41,9 @@ with open("telemetry/engine_data.json", "r") as file:
 # =====================================
 # DIAGNOSTIC CHECKLIST BUILDER
 # =====================================
-# Bounty (Core): "source checklist" — the 6 telemetry inputs
-# analyzer.py always reads before producing a diagnosis, captured
-# with their actual value at the moment of that decision, each
-# marked checked. Real, not decorative — these are the literal
-# inputs read at the top of analyze_engine() every single cycle.
+# Bounty (Core): the 6 telemetry inputs analyzer.py always reads
+# before producing a diagnosis, captured with their live value at
+# the moment of that decision.
 
 def build_checklist(engine):
 
@@ -89,12 +89,6 @@ def process_telemetry():
     # =================================
     # 3. ML Anomaly Detection
     # =================================
-    # Runs on the fault-affected reading, same as the rule-based
-    # analyzer below sees. This is the trained Isolation Forest,
-    # separate from and running alongside the rule-based diagnosis
-    # — not replacing it. If anomaly_model.pkl hasn't been trained
-    # yet, this returns a safe "not ready" placeholder instead of
-    # crashing Flask.
 
     telemetry["ml_anomaly"] = score_anomaly(
         telemetry["engine"]
@@ -144,10 +138,6 @@ def process_telemetry():
     # =================================
     # 8. Log AI Decision
     # =================================
-    # mission_time is passed through so each event card can show
-    # when it happened (e.g. "T+42s"), not just the message + level.
-    # checklist is new (Core bounty task) — the 6 inputs that were
-    # read to reach this diagnosis, with their live values.
 
     log_event(
         ai_result["diagnosis"],
@@ -170,10 +160,6 @@ def process_telemetry():
 
     SYSTEM_STATE = telemetry
 
-
-    # =================================
-    # Return Complete System State
-    # =================================
 
     return telemetry
 
@@ -232,6 +218,165 @@ def remove_fault():
     return jsonify({
         "status": "cleared"
     })
+
+
+# =====================================
+# MISSION REPORT EXPORT — HTML
+# =====================================
+# Elite bounty task: downloadable report reusing existing captured
+# fields, statuses, recommendations, and notes. Uses whatever is
+# currently in SYSTEM_STATE (the exact same data already on the
+# dashboard) — nothing new computed, purely a formatted export of
+# real, already-captured mission data.
+
+def build_html_report(telemetry):
+
+    engine = telemetry["engine"]
+    ai = telemetry["ai"]
+    ml = telemetry["ml_anomaly"]
+    events = telemetry["events"]
+
+    rows = ""
+    for e in reversed(events):
+        checklist_str = ", ".join(
+            f"{c['field']}: {c['value']} {c['unit']}".strip()
+            for c in e.get("checklist", [])
+        )
+        rows += f"""
+        <tr>
+            <td>T+{e.get('mission_time', '')}s</td>
+            <td class="lvl-{e['level'].lower()}">{e['level']}</td>
+            <td>{e['message']}</td>
+            <td class="small">{checklist_str}</td>
+        </tr>"""
+
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ASCENT Mission Report</title>
+<style>
+    body {{ background:#0B1020; color:#fff; font-family:Arial,sans-serif; padding:40px; }}
+    h1 {{ color:#4CC9F0; }}
+    h2 {{ color:#55D6FF; margin-top:30px; }}
+    table {{ width:100%; border-collapse:collapse; margin-top:10px; }}
+    td, th {{ border:1px solid #333; padding:8px 12px; text-align:left; font-size:14px; }}
+    th {{ background:#171E33; color:#9FB0D0; }}
+    .box {{ background:#171E33; padding:20px; border-radius:12px; margin-top:10px; }}
+    .lvl-high {{ color:#FF4D4D; font-weight:bold; }}
+    .lvl-medium {{ color:#FFD166; font-weight:bold; }}
+    .lvl-low {{ color:#31E56B; font-weight:bold; }}
+    .small {{ font-size:12px; color:#9FB0D0; }}
+    .meta {{ color:#7F92B4; }}
+</style>
+</head>
+<body>
+
+<h1>ASCENT Mission Report</h1>
+<p class="meta">Generated at mission time T+{telemetry['mission']['mission_time']}s | Vehicle: {telemetry['vehicle']} | Engine: {engine['type']}</p>
+
+<h2>Current Telemetry Snapshot</h2>
+<div class="box">
+<table>
+<tr><th>Field</th><th>Value</th></tr>
+<tr><td>Thrust</td><td>{engine['thrust_kN']} kN</td></tr>
+<tr><td>Chamber Pressure</td><td>{engine['chamber_pressure_bar']} bar</td></tr>
+<tr><td>Temperature</td><td>{engine['temperature_K']} K</td></tr>
+<tr><td>RPM</td><td>{engine['rpm']}</td></tr>
+<tr><td>Fuel Flow</td><td>{engine['fuel_flow_kg_s']} kg/s</td></tr>
+<tr><td>Vibration</td><td>{engine['vibration_mm_s']} mm/s</td></tr>
+<tr><td>Engine Health</td><td>{engine['health']}%</td></tr>
+<tr><td>Status</td><td>{engine['status']}</td></tr>
+</table>
+</div>
+
+<h2>AERIS AI Diagnosis (Rule-Based)</h2>
+<div class="box">
+<p><b>Diagnosis:</b> {ai['diagnosis']}</p>
+<p><b>Risk Level:</b> <span class="lvl-{ai['risk_level'].lower()}">{ai['risk_level']}</span></p>
+<p><b>Confidence:</b> {ai['confidence']}%</p>
+<p><b>Recommendation:</b> {ai['recommendation']}</p>
+<p><b>Autonomous Decision:</b> {ai['decision']}</p>
+<p><b>Autonomous Action:</b> {ai['action']}</p>
+</div>
+
+<h2>ML Anomaly Detection (Isolation Forest)</h2>
+<div class="box">
+<p><b>Anomaly Score:</b> {ml['anomaly_score']} / 100</p>
+<p><b>Status:</b> {"ANOMALOUS" if ml['is_anomaly'] else "NORMAL"}</p>
+</div>
+
+<h2>Mission Event History</h2>
+<table>
+<tr><th>Time</th><th>Level</th><th>Message</th><th>Checklist Snapshot</th></tr>
+{rows}
+</table>
+
+</body>
+</html>"""
+
+    return html
+
+
+@app.route("/export/report")
+def export_report():
+
+    telemetry = process_telemetry()
+
+    html = build_html_report(telemetry)
+
+    return Response(
+        html,
+        mimetype="text/html",
+        headers={
+            "Content-Disposition": "attachment; filename=ascent_mission_report.html"
+        }
+    )
+
+
+# =====================================
+# MISSION REPORT EXPORT — CSV
+# =====================================
+# Same underlying event data, flat tabular format instead of the
+# formatted HTML report above.
+
+@app.route("/export/csv")
+def export_csv():
+
+    telemetry = process_telemetry()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "mission_time", "level", "message",
+        "chamber_pressure_bar", "temperature_K", "rpm",
+        "fuel_flow_kg_s", "vibration_mm_s", "engine_health_pct"
+    ])
+
+    for e in reversed(telemetry["events"]):
+
+        checklist = {c["field"]: c["value"] for c in e.get("checklist", [])}
+
+        writer.writerow([
+            e.get("mission_time", ""),
+            e["level"],
+            e["message"],
+            checklist.get("Chamber Pressure", ""),
+            checklist.get("Temperature", ""),
+            checklist.get("RPM", ""),
+            checklist.get("Fuel Flow", ""),
+            checklist.get("Vibration", ""),
+            checklist.get("Engine Health", ""),
+        ])
+
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={
+            "Content-Disposition": "attachment; filename=ascent_event_history.csv"
+        }
+    )
 
 
 # =====================================
