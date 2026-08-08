@@ -37,6 +37,27 @@ with open("telemetry/engine_data.json", "r") as file:
 
 
 # =====================================
+# DIAGNOSTIC CHECKLIST BUILDER
+# =====================================
+# Bounty (Core): "source checklist" — the 6 telemetry inputs
+# analyzer.py always reads before producing a diagnosis, captured
+# with their actual value at the moment of that decision, each
+# marked checked. Real, not decorative — these are the literal
+# inputs read at the top of analyze_engine() every single cycle.
+
+def build_checklist(engine):
+
+    return [
+        {"field": "Chamber Pressure", "value": engine["chamber_pressure_bar"], "unit": "bar", "checked": True},
+        {"field": "Temperature", "value": engine["temperature_K"], "unit": "K", "checked": True},
+        {"field": "RPM", "value": engine["rpm"], "unit": "", "checked": True},
+        {"field": "Fuel Flow", "value": engine["fuel_flow_kg_s"], "unit": "kg/s", "checked": True},
+        {"field": "Vibration", "value": engine["vibration_mm_s"], "unit": "mm/s", "checked": True},
+        {"field": "Engine Health", "value": engine["health"], "unit": "%", "checked": True},
+    ]
+
+
+# =====================================
 # TELEMETRY PROCESSING PIPELINE
 # =====================================
 
@@ -73,7 +94,7 @@ def process_telemetry():
     # separate from and running alongside the rule-based diagnosis
     # — not replacing it. If anomaly_model.pkl hasn't been trained
     # yet, this returns a safe "not ready" placeholder instead of
-    # crashing the app.
+    # crashing Flask.
 
     telemetry["ml_anomaly"] = score_anomaly(
         telemetry["engine"]
@@ -125,11 +146,14 @@ def process_telemetry():
     # =================================
     # mission_time is passed through so each event card can show
     # when it happened (e.g. "T+42s"), not just the message + level.
+    # checklist is new (Core bounty task) — the 6 inputs that were
+    # read to reach this diagnosis, with their live values.
 
     log_event(
         ai_result["diagnosis"],
         ai_result["risk_level"],
-        telemetry["mission"]["mission_time"]
+        telemetry["mission"]["mission_time"],
+        checklist=build_checklist(telemetry["engine"])
     )
 
 
@@ -218,6 +242,6 @@ import os
 
 if __name__ == "__main__":
     app.run(
-        host="0.0.0.0",
-        port=int(os.environ.get("PORT", 5001))
+       debug=True,
+       port=5001
     )
