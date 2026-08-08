@@ -3,7 +3,7 @@ events = []
 last_message = None
 
 
-def log_event(message, level, mission_time=None):
+def log_event(message, level, mission_time=None, checklist=None):
 
     global last_message
 
@@ -18,7 +18,9 @@ def log_event(message, level, mission_time=None):
 
         "level": level,
 
-        "mission_time": mission_time
+        "mission_time": mission_time,
+
+        "checklist": checklist or []
 
     })
 
