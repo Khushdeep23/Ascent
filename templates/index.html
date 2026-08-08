@@ -559,6 +559,14 @@
             Mission Event Log
         </h3>
 
+        <div class="event-filter-tabs" id="eventFilterTabs">
+            <button class="filter-tab active" data-filter="ALL" onclick="setEventFilter('ALL')">All</button>
+            <button class="filter-tab" data-filter="LOW" onclick="setEventFilter('LOW')">Low</button>
+            <button class="filter-tab" data-filter="MEDIUM" onclick="setEventFilter('MEDIUM')">Medium</button>
+            <button class="filter-tab" data-filter="HIGH" onclick="setEventFilter('HIGH')">High</button>
+            <span class="filter-count" id="filterCount"></span>
+        </div>
+
 
         <div id="eventLog">
 
